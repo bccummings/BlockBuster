@@ -29,12 +29,14 @@ public class Movement : MonoBehaviour
         // Input.GetAxis refers to Input Manager in Unity (Edit > Project Settings > Input Manager)
         // Time.deltaTime gives period of each frame (1/Fs)
         // moveSpeed is multiplier to speed up or slow down movement
+
         float xValue = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
         float yValue = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
-        bool fire = Input.GetButton("Fire1");
+        bool fire = Input.GetButton("Jump");
 
 
-        transform.Rotate(xValue, yValue, 0f, Space.World);
+        transform.Rotate(0f, yValue, 0f, Space.World); // if turning, move entire cannon
+        transform.Find("Barrel").Rotate(xValue, 0f, 0f, Space.World); // if changing angle, only move barrel
 
         if (fire && Time.time > NextFire)
         {
@@ -46,7 +48,7 @@ public class Movement : MonoBehaviour
     
     void Fire()
     {
-        GameObject clone = Instantiate(projectile, transform.position, transform.rotation);
+        GameObject clone = Instantiate(projectile, transform.Find("Barrel").position, transform.Find("Barrel").rotation);
 
         Debug.Log("Fire! " + transform.rotation.x);
         clone.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * shotVelocity * clone.GetComponent<Rigidbody>().mass);
